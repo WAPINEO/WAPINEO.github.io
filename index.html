@@ -71,7 +71,7 @@
             border: 0;
         }
 
-        /* 영상 갤러리 그리드 스타일 (6개 깔끔한 정렬) */
+        /* 영상 갤러리 그리드 스타일 */
         .section-title {
             text-align: left;
             font-size: 1.2rem;
@@ -166,7 +166,7 @@
         <h1>WAPINEO</h1>
         <p class="sub-text">🎮 아케이드 게임 하는 사람 | 구독자 127명!</p>
 
-        <!-- 최신 메인 영상 플레이어 (자동재생 없음) -->
+        <!-- 최신 메인 영상 플레이어 -->
         <div class="video-container">
             <iframe id="main-video" src="" allowfullscreen></iframe>
         </div>
@@ -183,29 +183,38 @@
         </div>
     </div>
 
-    <!-- 유튜브 자동 영상 불러오기 스크립트 (최대 6개 제한) -->
+    <!-- 유튜브 영상 파싱 스크립트 -->
     <script>
-        // 📌 본인의 UC... 채널 ID를 아래 큰따옴표 안에 넣어주세요!
+        // 📌 본인의 UC... 채널 ID를 입력하세요.
         const channelId = 'UCQVikVUDGlraFj-Fnr4TG_g';
+
+        // 유튜브 링크에서 ID만 안전하게 잘라내는 함수
+        function extractVideoId(url) {
+            const regExp = /^.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[1].length === 11) ? match[1] : null;
+        }
 
         fetch(`https://api.rss2json.com/v1/api.json?rss_url=https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`)
             .then(res => res.json())
             .then(async data => {
                 if (data.items && data.items.length > 0) {
-                    // 1. 가장 최신 영상 1개를 메인 화면 플레이어에 설정
-                    const latestVideoId = data.items[0].link.split('v=')[1];
-                    document.getElementById('main-video').src = `https://www.youtube.com/embed/${latestVideoId}?autoplay=0`;
+                    // 1. 가장 최신 영상 ID 추출 후 메인 플레이어에 적용 (수동 재생)
+                    const latestVideoId = extractVideoId(data.items[0].link);
+                    if (latestVideoId) {
+                        document.getElementById('main-video').src = `https://www.youtube.com/embed/${latestVideoId}?autoplay=0`;
+                    }
 
-                    // 2. 영상 중 최근 6개만 잘라서 가져오기 (.slice(0, 6))
+                    // 2. 최근 6개 영상 갤러리 출력
                     const recentSixItems = data.items.slice(0, 6);
                     const gallery = document.getElementById('video-gallery');
 
                     for (const item of recentSixItems) {
                         const videoUrl = item.link;
                         const title = item.title;
+                        const vId = extractVideoId(videoUrl);
 
-                        // 숏츠/일반 영상 썸네일 자동 감지
-                        let thumbnailUrl = `https://i.ytimg.com/vi/${item.link.split('v=')[1]}/hqdefault.jpg`;
+                        let thumbnailUrl = `https://i.ytimg.com/vi/${vId}/hqdefault.jpg`;
                         try {
                             const oembedRes = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(videoUrl)}&format=json`);
                             if (oembedRes.ok) {
@@ -213,12 +222,12 @@
                                 thumbnailUrl = oembedData.thumbnail_url;
                             }
                         } catch (e) {
-                            console.log('oEmbed 실패, 기본 썸네일 사용');
+                            console.log('oEmbed 불러오기 실패, 기본 썸네일 사용');
                         }
 
                         const cardHtml = `
                             <a href="${videoUrl}" target="_blank" class="video-card">
-                                <img src="${thumbnailUrl}" alt="${title}" onerror="this.src='https://i.ytimg.com/vi/${item.link.split('v=')[1]}/hqdefault.jpg'">
+                                <img src="${thumbnailUrl}" alt="${title}" onerror="this.src='https://i.ytimg.com/vi/${vId}/hqdefault.jpg'">
                                 <div class="video-title">${title}</div>
                             </a>
                         `;
