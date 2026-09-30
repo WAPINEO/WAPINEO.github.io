@@ -128,7 +128,7 @@
     const channelId = 'UCQVikVUDGlraFj-Fnr4TG_g'; 
     
     // RSS Feed를 이용해 최신 영상 ID 자동으로 가져오기
-    fetch(`https://api.rss2json.com/v1/api.json?rss_url=https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`)
+    fetch(`https://api.rss2json.com/v1/api.json?rss_url=https://www.youtube.com/feeds/videos.xml?channel_id=${UCQVikVUDGlraFj-Fnr4TG_g}`)
         .then(response => response.json())
         .then(data => {
             if (data.items && data.items.length > 0) {
