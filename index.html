@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> WAPINEO 임시 사이트</title>
+    <title>게임 유튜버 WAPINEO 공식 페이지</title>
     <style>
         :root {
             --bg-color: #0f1015;
@@ -58,18 +58,6 @@
             word-break: keep-all;
         }
 
-        /* 공통 섹션 제목 */
-        .section-title {
-            text-align: left;
-            font-size: 1.15rem;
-            margin-top: 35px;
-            margin-bottom: 15px;
-            color: var(--accent-color);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
         /* 대표 메인 영상 스타일 */
         .video-container {
             position: relative;
@@ -92,12 +80,24 @@
             border: 0;
         }
 
-        /* 최근 영상 갤러리 그리드 */
+        /* 영상 갤러리 섹션 */
+        .section-title {
+            text-align: left;
+            font-size: 1.15rem;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* 기본(PC) 그리드: 3열 / 모바일: 2열 자동 대응 */
         .video-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
 
         .video-card {
@@ -137,76 +137,11 @@
             word-break: break-word;
         }
 
-        /* 📁 자료실 스타일 */
-        .download-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-            gap: 12px;
-            text-align: left;
-        }
-
-        .download-card {
-            background-color: var(--card-bg);
-            border: 1px solid #2a2d3d;
-            border-radius: 10px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: border-color 0.2s;
-        }
-
-        .download-card:hover {
-            border-color: var(--accent-color);
-        }
-
-        .download-card-title {
-            font-weight: bold;
-            font-size: 0.95rem;
-            margin-bottom: 6px;
-            color: #fff;
-        }
-
-        .download-card-desc {
-            font-size: 0.8rem;
-            color: var(--text-sub);
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
-
-        .download-btn {
-            display: inline-block;
-            padding: 8px 12px;
-            background-color: #2a2d3d;
-            color: var(--accent-color);
-            text-decoration: none;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            text-align: center;
-            transition: background-color 0.2s, color 0.2s;
-        }
-
-        .download-btn:hover {
-            background-color: var(--accent-color);
-            color: #000;
-        }
-
-        /* 💬 방명록 / 커뮤니티 컨테이너 */
-        .community-container {
-            background-color: var(--card-bg);
-            border: 1px solid #2a2d3d;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: left;
-            margin-top: 10px;
-        }
-
         /* 주요 링크 버튼 */
         .links-grid {
             display: grid;
             gap: 12px;
-            margin-top: 25px;
+            margin-top: 15px;
         }
 
         .link-btn {
@@ -243,7 +178,7 @@
             color: #000;
         }
 
-        /* 📱 모바일화면 최적화 */
+        /* 📱 모바일화면(폭 600px 이하) 최적화 반응형 스타일 */
         @media (max-width: 600px) {
             .container {
                 width: 92%;
@@ -264,13 +199,10 @@
                 margin-bottom: 20px;
             }
 
+            /* 모바일에서는 2열로 정렬하여 보기 좋게 구성 */
             .video-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
-            }
-
-            .download-grid {
-                grid-template-columns: 1fr;
             }
 
             .video-title {
@@ -301,46 +233,6 @@
         <!-- 최근 영상 목록 갤러리 (6개) -->
         <h2 class="section-title">🎬 최근 업로드 영상</h2>
         <div id="video-gallery" class="video-grid"></div>
-
-        <!-- 📂 자료실 섹션 (필요한 자료 추가/수정 가능) -->
-        <h2 class="section-title">📂 WAPINEO 자료실</h2>
-        <div class="download-grid">
-            <div class="download-card">
-                <div>
-                    <div class="download-card-title">🎮 펌프 잇 업 BGA 모음</div>
-                    <div class="download-card-desc">최신 PUMP IT UP 관련 이미지 및 커스텀 자료 모음입니다.</div>
-                </div>
-                <a href="https://drive.google.com" target="_blank" class="download-btn">📥 다운로드 (구글드라이브)</a>
-            </div>
-            <div class="download-card">
-                <div>
-                    <div class="download-card-title">🖼️ WAPINEO 프로필 / 배경화면</div>
-                    <div class="download-card-desc">채널 공식 일러스트 및 고화질 배경화면 다운로드입니다.</div>
-                </div>
-                <a href="https://drive.google.com" target="_blank" class="download-btn">📥 다운로드</a>
-            </div>
-        </div>
-
-        <!-- 💬 방명록 및 커뮤니티 (Giscus 댓글 기능) -->
-        <h2 class="section-title">💬 팬 방명록 & 자유게시판</h2>
-        <div class="community-container">
-            <!-- Giscus 스크립트 연결 영역 -->
-            <script src="https://giscus.app/client.js"
-                    data-repo="본인_깃허브_아이디/저장소_이름"
-                    data-repo-id="여기에_REPO_ID"
-                    data-category="Announcements"
-                    data-category-id="여기에_CATEGORY_ID"
-                    data-mapping="pathname"
-                    data-strict="0"
-                    data-reactions-enabled="1"
-                    data-emit-metadata="0"
-                    data-input-position="top"
-                    data-theme="dark"
-                    data-lang="ko"
-                    crossorigin="anonymous"
-                    async>
-            </script>
-        </div>
 
         <!-- 주요 링크 섹션 -->
         <div class="links-grid">
