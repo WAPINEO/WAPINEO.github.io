@@ -13,41 +13,49 @@
             --text-sub: #a0a5b5;
         }
 
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Pretendard', sans-serif;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             display: flex;
             flex-direction: column;
             align-items: center;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .container {
             width: 90%;
             max-width: 800px;
-            margin: 40px auto;
+            margin: 30px auto;
             text-align: center;
         }
 
         .profile-img {
-            width: 120px;
-            height: 120px;
+            width: 110px;
+            height: 110px;
             border-radius: 50%;
             border: 3px solid var(--accent-color);
-            margin-bottom: 15px;
+            margin-bottom: 12px;
+            object-fit: cover;
         }
 
         h1 {
-            margin: 10px 0 5px;
-            font-size: 2rem;
+            margin: 5px 0;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
         }
 
         .sub-text {
             color: var(--text-sub);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             margin-bottom: 25px;
+            word-break: keep-all;
         }
 
         /* 대표 메인 영상 스타일 */
@@ -58,8 +66,9 @@
             overflow: hidden;
             border-radius: 12px;
             background: #000;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             border: 1px solid #2a2d3d;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
         }
 
         .video-container iframe {
@@ -71,20 +80,24 @@
             border: 0;
         }
 
-        /* 영상 갤러리 그리드 스타일 */
+        /* 영상 갤러리 섹션 */
         .section-title {
             text-align: left;
-            font-size: 1.2rem;
-            margin-top: 30px;
-            margin-bottom: 15px;
+            font-size: 1.15rem;
+            margin-top: 25px;
+            margin-bottom: 12px;
             color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
+        /* 기본(PC) 그리드: 3열 / 모바일: 2열 자동 대응 */
         .video-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 15px;
-            margin-bottom: 35px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 30px;
         }
 
         .video-card {
@@ -99,8 +112,9 @@
             flex-direction: column;
         }
 
+        .video-card:active,
         .video-card:hover {
-            transform: translateY(-4px);
+            transform: translateY(-3px);
             border-color: var(--accent-color);
         }
 
@@ -112,35 +126,40 @@
         }
 
         .video-title {
-            padding: 10px;
-            font-size: 0.85rem;
+            padding: 8px 10px;
+            font-size: 0.8rem;
             text-align: left;
-            line-height: 1.3;
+            line-height: 1.35;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            word-break: break-word;
         }
 
-        /* 링크 버튼 스타일 */
+        /* 주요 링크 버튼 */
         .links-grid {
             display: grid;
-            gap: 15px;
-            margin-top: 20px;
+            gap: 12px;
+            margin-top: 15px;
         }
 
         .link-btn {
-            display: block;
-            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
             background-color: var(--card-bg);
             color: var(--text-color);
             text-decoration: none;
             border-radius: 10px;
             font-weight: bold;
+            font-size: 0.95rem;
             border: 1px solid #2a2d3d;
             transition: all 0.2s ease;
         }
 
+        .link-btn:active,
         .link-btn:hover {
             border-color: var(--accent-color);
             color: var(--accent-color);
@@ -150,11 +169,51 @@
         .highlight-btn {
             background-color: var(--accent-color);
             color: #000;
+            border-color: var(--accent-color);
         }
 
+        .highlight-btn:active,
         .highlight-btn:hover {
             background-color: #00cc6a;
             color: #000;
+        }
+
+        /* 📱 모바일화면(폭 600px 이하) 최적화 반응형 스타일 */
+        @media (max-width: 600px) {
+            .container {
+                width: 92%;
+                margin: 20px auto;
+            }
+
+            .profile-img {
+                width: 90px;
+                height: 90px;
+            }
+
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .sub-text {
+                font-size: 0.85rem;
+                margin-bottom: 20px;
+            }
+
+            /* 모바일에서는 2열로 정렬하여 보기 좋게 구성 */
+            .video-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .video-title {
+                padding: 6px 8px;
+                font-size: 0.75rem;
+            }
+
+            .link-btn {
+                padding: 14px;
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
@@ -171,7 +230,7 @@
             <iframe id="main-video" src="" allowfullscreen></iframe>
         </div>
 
-        <!-- 최근 영상 목록 갤러리 (6개 제한) -->
+        <!-- 최근 영상 목록 갤러리 (6개) -->
         <h2 class="section-title">🎬 최근 업로드 영상</h2>
         <div id="video-gallery" class="video-grid"></div>
 
@@ -188,7 +247,6 @@
         // 📌 본인의 UC... 채널 ID를 입력하세요.
         const channelId = 'UCQVikVUDGlraFj-Fnr4TG_g';
 
-        // 유튜브 링크에서 ID만 안전하게 잘라내는 함수
         function extractVideoId(url) {
             const regExp = /^.*(?:youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
             const match = url.match(regExp);
@@ -199,13 +257,11 @@
             .then(res => res.json())
             .then(async data => {
                 if (data.items && data.items.length > 0) {
-                    // 1. 가장 최신 영상 ID 추출 후 메인 플레이어에 적용 (수동 재생)
                     const latestVideoId = extractVideoId(data.items[0].link);
                     if (latestVideoId) {
                         document.getElementById('main-video').src = `https://www.youtube.com/embed/${latestVideoId}?autoplay=0`;
                     }
 
-                    // 2. 최근 6개 영상 갤러리 출력
                     const recentSixItems = data.items.slice(0, 6);
                     const gallery = document.getElementById('video-gallery');
 
@@ -222,7 +278,7 @@
                                 thumbnailUrl = oembedData.thumbnail_url;
                             }
                         } catch (e) {
-                            console.log('oEmbed 불러오기 실패, 기본 썸네일 사용');
+                            console.log('oEmbed 실패, 기본 썸네일 사용');
                         }
 
                         const cardHtml = `
