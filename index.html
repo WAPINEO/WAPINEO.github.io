@@ -50,6 +50,7 @@
             margin-bottom: 25px;
         }
 
+        /* 대표 메인 영상 스타일 */
         .video-container {
             position: relative;
             padding-bottom: 56.25%;
@@ -70,6 +71,57 @@
             border: 0;
         }
 
+        /* 영상 갤러리 그리드 스타일 */
+        .section-title {
+            text-align: left;
+            font-size: 1.2rem;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            color: var(--accent-color);
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 35px;
+        }
+
+        .video-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #2a2d3d;
+            transition: transform 0.2s, border-color 0.2s;
+            text-decoration: none;
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .video-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-color);
+        }
+
+        .video-card img {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+        }
+
+        .video-title {
+            padding: 10px;
+            font-size: 0.85rem;
+            text-align: left;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* 링크 버튼 스타일 */
         .links-grid {
             display: grid;
             gap: 15px;
@@ -109,19 +161,19 @@
 
     <div class="container">
         <!-- 프로필 섹션 -->
-     <img src="https://yt3.googleusercontent.com/gWg6J295tiH2vAwCbK1lcVj601yUtjJneV3obXCz1Iocoeq3s2ls49LDIpwAH3ORczv4VIjw=s160-c-k-c0x00ffffff-no-rj" alt="WAPINEO 프로필" style="width: 120px; height: 120px; border-radius: 50%;">
+        <img src="https://yt3.googleusercontent.com/gWg6J295tiH2vAwCbK1lcVj601yUtjJneV3obXCz1Iocoeq3s2ls49LDIpwAH3ORczv4VIjw=s160-c-k-c0x00ffffff-no-rj" alt="WAPINEO 프로필" class="profile-img">
         <h1>WAPINEO</h1>
-        <p class="sub-text">🎮 아케이드 게임 하는 사람 | 구독자 127명! </p>
+        <p class="sub-text">🎮 아케이드 게임 하는 사람 | 구독자 127명!</p>
 
-        <!-- 대표 영상 섹션 -->
+        <!-- 최신 메인 영상 플레이어 (자동재생 없음) -->
         <div class="video-container">
-            <!-- 유튜브 동영상 공유 > 퍼가기(Embed) 코드에서 src 부분의 URL만 넣어주세요 -->
-            <iframe src="https://www.youtube.com/embed/UsDF6a6dF2A" allowfullscreen></iframe>
+            <iframe id="main-video" src="" allowfullscreen></iframe>
         </div>
-<!-- 대표 영상 섹션 (자동 최신 영상 불러오기) -->
-<div class="video-container">
-    <iframe id="latest-video" src="" allowfullscreen></iframe>
-</div>
+
+        <!-- 최근 영상 목록 갤러리 -->
+        <h2 class="section-title">🎬 최근 업로드 영상</h2>
+        <div id="video-gallery" class="video-grid"></div>
+
         <!-- 주요 링크 섹션 -->
         <div class="links-grid">
             <a href="https://youtube.com/@WAPINEO" target="_blank" class="link-btn highlight-btn">▶️ 유튜브 채널 바로가기</a>
@@ -129,6 +181,39 @@
             <a href="https://ci.me/@wapineo" target="_blank" class="link-btn">📺 씨미 생방송 보러가기</a>
         </div>
     </div>
+
+    <!-- 유튜브 자동 영상 불러오기 스크립트 -->
+    <script>
+        // 📌 본인의 UC... 채널 ID를 아래 큰따옴표 안에 넣어주세요!
+        const channelId = '여기에_UC로_시작하는_채널ID_입력';
+
+        fetch(`https://api.rss2json.com/v1/api.json?rss_url=https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.items && data.items.length > 0) {
+                    // 1. 가장 최신 영상 1개를 메인 화면 플레이어에 설정 (수동 재생: autoplay=0)
+                    const latestVideoId = data.items[0].link.split('v=')[1];
+                    document.getElementById('main-video').src = `https://www.youtube.com/embed/${latestVideoId}?autoplay=0`;
+
+                    // 2. 전체 최신 영상들을 하단 카드 갤러리에 순서대로 추가
+                    const gallery = document.getElementById('video-gallery');
+                    data.items.forEach(item => {
+                        const videoId = item.link.split('v=')[1];
+                        const title = item.title;
+                        const thumbnail = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+
+                        const cardHtml = `
+                            <a href="${item.link}" target="_blank" class="video-card">
+                                <img src="${thumbnail}" alt="${title}">
+                                <div class="video-title">${title}</div>
+                            </a>
+                        `;
+                        gallery.innerHTML += cardHtml;
+                    });
+                }
+            })
+            .catch(err => console.error('영상을 불러오는 중 오류 발생:', err));
+    </script>
 
 </body>
 </html>
