@@ -71,7 +71,7 @@
             border: 0;
         }
 
-        /* 영상 갤러리 그리드 스타일 */
+        /* 영상 갤러리 그리드 스타일 (6개 깔끔한 정렬) */
         .section-title {
             text-align: left;
             font-size: 1.2rem;
@@ -171,7 +171,7 @@
             <iframe id="main-video" src="" allowfullscreen></iframe>
         </div>
 
-        <!-- 최근 영상 목록 갤러리 -->
+        <!-- 최근 영상 목록 갤러리 (6개 제한) -->
         <h2 class="section-title">🎬 최근 업로드 영상</h2>
         <div id="video-gallery" class="video-grid"></div>
 
@@ -183,7 +183,7 @@
         </div>
     </div>
 
-    <!-- 유튜브 자동 영상 불러오기 스크립트 (oEmbed 썸네일 지원) -->
+    <!-- 유튜브 자동 영상 불러오기 스크립트 (최대 6개 제한) -->
     <script>
         // 📌 본인의 UC... 채널 ID를 아래 큰따옴표 안에 넣어주세요!
         const channelId = 'UCQVikVUDGlraFj-Fnr4TG_g';
@@ -196,14 +196,15 @@
                     const latestVideoId = data.items[0].link.split('v=')[1];
                     document.getElementById('main-video').src = `https://www.youtube.com/embed/${latestVideoId}?autoplay=0`;
 
-                    // 2. 전체 영상 카드 비동기 처리
+                    // 2. 영상 중 최근 6개만 잘라서 가져오기 (.slice(0, 6))
+                    const recentSixItems = data.items.slice(0, 6);
                     const gallery = document.getElementById('video-gallery');
 
-                    for (const item of data.items) {
+                    for (const item of recentSixItems) {
                         const videoUrl = item.link;
                         const title = item.title;
 
-                        // 유튜브 oEmbed API를 이용해 숏츠/일반 영상의 정확한 썸네일 추출
+                        // 숏츠/일반 영상 썸네일 자동 감지
                         let thumbnailUrl = `https://i.ytimg.com/vi/${item.link.split('v=')[1]}/hqdefault.jpg`;
                         try {
                             const oembedRes = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(videoUrl)}&format=json`);
@@ -212,7 +213,7 @@
                                 thumbnailUrl = oembedData.thumbnail_url;
                             }
                         } catch (e) {
-                            console.log('oEmbed 가져오기 실패, 기본 썸네일 사용');
+                            console.log('oEmbed 실패, 기본 썸네일 사용');
                         }
 
                         const cardHtml = `
