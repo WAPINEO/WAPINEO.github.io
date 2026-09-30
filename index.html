@@ -108,6 +108,7 @@
             width: 100%;
             aspect-ratio: 16 / 9;
             object-fit: cover;
+            background-color: #000;
         }
 
         .video-title {
@@ -182,34 +183,46 @@
         </div>
     </div>
 
-    <!-- 유튜브 자동 영상 불러오기 스크립트 -->
+    <!-- 유튜브 자동 영상 불러오기 스크립트 (oEmbed 썸네일 지원) -->
     <script>
         // 📌 본인의 UC... 채널 ID를 아래 큰따옴표 안에 넣어주세요!
         const channelId = 'UCQVikVUDGlraFj-Fnr4TG_g';
 
         fetch(`https://api.rss2json.com/v1/api.json?rss_url=https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`)
             .then(res => res.json())
-            .then(data => {
+            .then(async data => {
                 if (data.items && data.items.length > 0) {
-                    // 1. 가장 최신 영상 1개를 메인 화면 플레이어에 설정 (수동 재생: autoplay=0)
+                    // 1. 가장 최신 영상 1개를 메인 화면 플레이어에 설정
                     const latestVideoId = data.items[0].link.split('v=')[1];
                     document.getElementById('main-video').src = `https://www.youtube.com/embed/${latestVideoId}?autoplay=0`;
 
-                    // 2. 전체 최신 영상들을 하단 카드 갤러리에 순서대로 추가
+                    // 2. 전체 영상 카드 비동기 처리
                     const gallery = document.getElementById('video-gallery');
-                    data.items.forEach(item => {
-                        const videoId = item.link.split('v=')[1];
+
+                    for (const item of data.items) {
+                        const videoUrl = item.link;
                         const title = item.title;
-                        const thumbnail = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+
+                        // 유튜브 oEmbed API를 이용해 숏츠/일반 영상의 정확한 썸네일 추출
+                        let thumbnailUrl = `https://i.ytimg.com/vi/${item.link.split('v=')[1]}/hqdefault.jpg`;
+                        try {
+                            const oembedRes = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(videoUrl)}&format=json`);
+                            if (oembedRes.ok) {
+                                const oembedData = await oembedRes.json();
+                                thumbnailUrl = oembedData.thumbnail_url;
+                            }
+                        } catch (e) {
+                            console.log('oEmbed 가져오기 실패, 기본 썸네일 사용');
+                        }
 
                         const cardHtml = `
-                            <a href="${item.link}" target="_blank" class="video-card">
-                                <img src="${thumbnail}" alt="${title}">
+                            <a href="${videoUrl}" target="_blank" class="video-card">
+                                <img src="${thumbnailUrl}" alt="${title}" onerror="this.src='https://i.ytimg.com/vi/${item.link.split('v=')[1]}/hqdefault.jpg'">
                                 <div class="video-title">${title}</div>
                             </a>
                         `;
                         gallery.innerHTML += cardHtml;
-                    });
+                    }
                 }
             })
             .catch(err => console.error('영상을 불러오는 중 오류 발생:', err));
